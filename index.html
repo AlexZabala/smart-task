@@ -4,9 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartTask - Agenda Inteligente Pro</title>
+
+    <meta name="theme-color" content="#2563eb">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Agenda Inteligente Pro + Notificaciones</title>
+    <meta name="apple-mobile-web-app-title" content="SmartTask">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/552/552402.png">
+    <link rel="manifest" href="manifest.json">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -121,7 +128,7 @@
                 statusEl.innerText = "✅ Notificaciones activadas";
                 statusEl.classList.replace('text-slate-400', 'text-green-600');
             } else {
-                statusEl.innerText = "❌ Notificaciones bloqueadas. Actívalas en ajustes.";
+                statusEl.innerText = "❌ Notificaciones bloqueadas o desactivadas.";
                 statusEl.classList.replace('text-slate-400', 'text-red-500');
             }
         }
@@ -136,7 +143,6 @@
             document.getElementById('clock').innerText = now.toLocaleTimeString();
 
             tasks.forEach(task => {
-                // Si la hora coincide, no está completada y la alarma no ha disparado este minuto
                 if (task.time === currentTime && !task.completed && !task.alarmFired) {
                     triggerAlarm(task);
                 }
@@ -145,18 +151,15 @@
 
         function triggerAlarm(task) {
             task.alarmFired = true;
-            document.getElementById('alarmSound').play().catch(e => console.log("Audio bloqueado hasta interacción."));
+            document.getElementById('alarmSound').play().catch(() => { });
 
-            // Notificación Push de Sistema
             if (Notification.permission === "granted") {
                 new Notification("⏰ ¡Tarea Pendiente!", {
                     body: task.text,
-                    icon: "https://cdn-icons-png.flaticon.com/512/552/552402.png",
-                    vibrate: [200, 100, 200]
+                    icon: "https://cdn-icons-png.flaticon.com/512/552/552402.png"
                 });
             }
 
-            // Alerta visual de respaldo
             alert(`RECORDATORIO: ${task.text}`);
             saveAndRender();
         }
